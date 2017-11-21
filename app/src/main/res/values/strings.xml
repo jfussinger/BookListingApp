@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">BookListingApp</string>
+
+    <string name="app_label">App Label</string>
+
+    <string name="searchView">Search View</string>
+
+    <string name="search_button">Search Button</string>
+
+    <string name="search_label">Search Label</string>
+
+    <string name="title">Title</string>
+
+    <string name="authors">Authors</string>
+
+    <!-- Text to display in the list when there are no books found [CHAR LIMIT=NONE] -->
+    <string name="no_books">No books found.</string>
+
+    <!-- If no specific author not found is given [CHAR LIMIT=30] -->
+    <string name="not_found">Not Found</string>
+
+    <!-- Error message when there is no internet connectivity [CHAR LIMIT=NONE] -->
+    <string name="no_internet_connection">No internet connection.</string>
+
+</resources>
