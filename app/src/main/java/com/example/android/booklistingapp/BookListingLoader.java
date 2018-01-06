@@ -8,13 +8,16 @@ import java.util.List;
 import static com.example.android.booklistingapp.QueryUtils.fetchBookListingData;
 
 /**
- * Loads a list of earthquakes by using an AsyncTask to perform the
+ * Loads a list by using an AsyncTask to perform the
  * network request to the given URL.
  */
+
 public class BookListingLoader extends AsyncTaskLoader<List<BookListing>> {
 
     /** Tag for log messages */
     private static final String LOG_TAG = BookListingLoader.class.getName();
+
+    //TODO Update the Query URL based on the SearchView Search String
 
     /** Query URL */
     private String Url;
@@ -44,7 +47,7 @@ public class BookListingLoader extends AsyncTaskLoader<List<BookListing>> {
             return null;
         }
 
-        // Perform the network request, parse the response, and extract a list of books.
+        //Perform the network request, parse the response, and extract a list of books.
         return QueryUtils.fetchBookListingData(Url);
     }
 }

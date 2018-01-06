@@ -2,16 +2,25 @@ package com.example.android.booklistingapp;
 
 //https://github.com/crlsndrsjmnz/MySearchViewExample
 //https://developer.android.com/reference/android/widget/SearchView.html
+//https://developer.android.com/training/search/setup.html#create-sc
+//https://developer.android.com/guide/topics/search/search-dialog.html
+//https://developer.android.com/reference/android/app/LoaderManager.html
+//https://developer.android.com/guide/components/loaders.html
+//https://developer.android.com/reference/java/net/HttpURLConnection.html
 
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,17 +29,28 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// HERE ARE SOME NOTES ABOUT THE PROJECT:
+
+// Google Books App is currently using Android as a static url (Google Books API (Android)), but for purposes of
+// this project will need to enter word of phrase to serve as a search query (SearchView).
+
+// The app fetches book data related to the query via an HTTP request from Google Books API, using a class such as
+// HttpUrlRequest or HttpUrlConnection.
+
+// Async Task - The network call occurs off the UI thread using an AsyncTask or similar threading object
+
+// JSON Parsing - The JSON response is parsed correctly, and relevant information is stored in the app.
+
+// The use of EXTERNAL LIBRARIES and PACKAGES for code functionality is not permitted for this project
+// The intent of this project is to practice writing raw JAVA code using the necesary classes provided by Android framework.
+
+
+
 public class BookListingActivity extends AppCompatActivity
         implements LoaderCallbacks<List<BookListing>> {
 
     private static final String LOG_TAG = BookListingActivity.class.getName();
-
-    /**
-     * URL for google books data from the Google Books dataset
-     */
-    String searchQuery;
-    private final String url =
-            "https://www.googleapis.com/books/v1/volumes?maxResults=20&q="+searchQuery;
 
     /**
      * Constant value for the book listing loader ID. We can choose any integer.
@@ -42,14 +62,6 @@ public class BookListingActivity extends AppCompatActivity
      */
     private BookListingAdapter Adapter;
 
-    SearchView searchView;
-
-    //TO DO
-
-    // Add a searchview
-    // Take the search query from search view and update the URL
-    // start the loader on click of search icon
-
     /**
      * TextView that is displayed when the list is empty
      */
@@ -58,24 +70,8 @@ public class BookListingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.booklisting_activity);
-
-        searchView = (SearchView) findViewById(R.id.searchView);
-        searchView.setQueryHint("Search View");
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String Query) {
-                Toast.makeText(getBaseContext(), searchQuery, Toast.LENGTH_LONG).show();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Toast.makeText(getBaseContext(), searchQuery, Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });
 
         // Find a reference to the {@link ListView} in the layout
         ListView booklistingListView = (ListView) findViewById(R.id.list);
@@ -115,7 +111,79 @@ public class BookListingActivity extends AppCompatActivity
             // Update empty state with no connection error message
             EmptyStateTextView.setText(R.string.no_internet_connection);
         }
+
     }
+
+
+    //TODO Add a searchview
+    //TODO Take the search query from search view and update the URL
+    //
+    // private String googleBooksUrl = "https://www.googleapis.com/books/v1/volumes?maxResults=20&q=";
+    // private String searchQuery = getString(R.string.searchQuery);
+    // private String url = googleBooksUrl + searchQuery
+    //
+    //TODO Start the loader on click of search icon
+
+
+
+    private String url = "https://www.googleapis.com/books/v1/volumes?maxResults=20&q=android";
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        //TODO Associate searchable configuration with the SearchView
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        SearchView searchView = (SearchView) findViewById(R.id.searchQuery);
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setQueryHint("SearchView");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String url) {
+
+                Toast.makeText(getBaseContext(), "Searching for " + url, Toast.LENGTH_SHORT).show();
+
+                // clear the focus of the SearchView
+                View current = getCurrentFocus();
+                if (current != null)
+                    current.clearFocus();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+
+        });
+
+        return true;
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String searchQuery = intent.getStringExtra(SearchManager.QUERY);
+            //TODO input code here for doMySearch(query);
+            //doMySearch(searchQuery);
+        }
+    }
+
+    //TODO Correct onCreateLoader for after SearchView based on URL string search
+
 
     @Override
     public Loader<List<BookListing>> onCreateLoader(int i, Bundle bundle) {

@@ -1,11 +1,16 @@
 package com.example.android.booklistingapp;
 
+//https://github.com/bumptech/glide
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -20,9 +25,15 @@ import java.util.List;
 
 public class BookListingAdapter extends ArrayAdapter<BookListing> {
 
+    //Context context;
+
     private static class ViewHolder {
+
         TextView title;
         TextView authors;
+        TextView publishedDate;
+        ImageView thumbnail;
+        TextView textSnippet;
     }
 
     /**
@@ -51,6 +62,9 @@ public class BookListingAdapter extends ArrayAdapter<BookListing> {
             viewHolder = new ViewHolder();
             viewHolder.title = (TextView) convertView.findViewById(R.id.title);
             viewHolder.authors = (TextView) convertView.findViewById(R.id.authors);
+            viewHolder.publishedDate = (TextView) convertView.findViewById(R.id.publishedDate);
+            viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.thumbnail);
+            viewHolder.textSnippet = (TextView) convertView.findViewById(R.id.textSnippet);
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
         } else {
@@ -60,6 +74,13 @@ public class BookListingAdapter extends ArrayAdapter<BookListing> {
 
         viewHolder.title.setText(BookListing.getTitle());
         viewHolder.authors.setText(BookListing.getAuthors());
+        viewHolder.publishedDate.setText(BookListing.getPublishedDate());
+
+        final String thumbnail = BookListing.getThumbnail();
+        Glide.with(getContext()).load(thumbnail).placeholder(R.drawable.ic_gb).into(viewHolder.thumbnail);
+
+        viewHolder.textSnippet.setText(BookListing.getTextSnippet());
+
 
         return convertView;
     }
